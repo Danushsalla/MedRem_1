@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-100 p-4 transition-all;
+  }
+  
+  .card-interactive {
+    @apply hover:shadow-md active:shadow-sm active:translate-y-0.5;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 rounded-lg bg-gray-100 border-2 border-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all;
+  }
+  
+  .btn {
+    @apply px-4 py-3 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 focus:ring-blue-500;
+  }
+  
+  .btn-danger {
+    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700 focus:ring-red-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 focus:ring-gray-500;
+  }
+  
+  .status-on-time {
+    @apply text-green-600;
+  }
+  
+  .status-missed {
+    @apply text-red-600;
+  }
+  
+  .status-empty {
+    @apply text-gray-500;
+  }
+  
+  .page-transition {
+    @apply transition-opacity duration-300;
+  }
+  
+  .page-enter {
+    @apply opacity-0;
+  }
+  
+  .page-enter-active {
+    @apply opacity-100;
+  }
+  
+  .pill-icon {
+    @apply transition-transform duration-300;
+  }
+  
+  .pill-icon-active {
+    @apply rotate-12 scale-110;
+  }
+}
