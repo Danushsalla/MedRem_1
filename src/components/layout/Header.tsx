@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Pill } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
@@ -19,7 +19,10 @@ const Header = ({ title, showBackButton, onBack }: HeaderProps) => {
             <ArrowLeft size={24} />
           </button>
         )}
-        <h1 className="text-xl font-bold">{title}</h1>
+        <div className="flex items-center gap-2">
+          <Pill size={24} className="text-primary-600" />
+          <h1 className="text-xl font-bold">{title}</h1>
+        </div>
       </div>
     </header>
   );

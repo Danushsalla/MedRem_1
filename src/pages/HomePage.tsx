@@ -10,7 +10,6 @@ const HomePage = () => {
   const upcomingMedications = medications
     .filter(med => med.status !== 'empty')
     .sort((a, b) => {
-      // Simple string comparison for time (not perfect but works for this demo)
       return a.time.localeCompare(b.time);
     })
     .slice(0, 3);
@@ -19,11 +18,16 @@ const HomePage = () => {
   const missedMedications = medications.filter(med => med.status === 'missed');
 
   return (
-    <Layout title="MedTracker">
+    <Layout title={
+      <div className="flex items-center gap-2">
+        <Pill size={28} className="text-primary-600" />
+        <span>MedRem</span>
+      </div>
+    }>
       <div className="space-y-6">
         <div className="bg-primary-100 rounded-xl p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-primary-800 mb-2">
-            Welcome to MedTracker
+            Welcome to MedRem
           </h2>
           <p className="text-primary-700">
             Track your medications, get reminders, and never miss a dose again.
@@ -63,7 +67,7 @@ const HomePage = () => {
               {upcomingMedications.map((med) => (
                 <div 
                   key={med.id} 
-                  className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+                  className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => navigate(`/medications/${med.id}`)}
                 >
                   <Pill className={`text-primary-600 flex-shrink-0`} />
