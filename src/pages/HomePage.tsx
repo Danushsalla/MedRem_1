@@ -18,12 +18,7 @@ const HomePage = () => {
   const missedMedications = medications.filter(med => med.status === 'missed');
 
   return (
-    <Layout title={
-      <div className="flex items-center gap-2">
-        <Pill size={28} className="text-primary-600" />
-        <span>MedRem</span>
-      </div>
-    }>
+    <Layout title="MedRem">
       <div className="space-y-6">
         <div className="bg-primary-100 rounded-xl p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-primary-800 mb-2">
