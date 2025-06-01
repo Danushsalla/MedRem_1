@@ -6,6 +6,8 @@ import SettingsPage from './pages/SettingsPage';
 import AddMedicationPage from './pages/AddMedicationPage';
 import EditMedicationPage from './pages/EditMedicationPage';
 import MedicationDetailPage from './pages/MedicationDetailPage';
+import ProfilePage from './pages/ProfilePage';
+import TermsPage from './pages/TermsPage';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
   {
     path: '/medications/:id',
     element: <MedicationDetailPage />,
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage />,
+  },
+  {
+    path: '/terms',
+    element: <TermsPage />,
   },
 ]);
 
