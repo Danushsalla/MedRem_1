@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMedication } from '../../context/MedicationContext';
 import { MedicationFrequency } from '../../types';
 import { useNavigate } from 'react-router-dom';
+import { X, ChevronDown } from 'lucide-react';
 
 interface MedicationFormProps {
   editId?: string;
@@ -20,9 +21,11 @@ const MedicationForm = ({ editId }: MedicationFormProps) => {
     frequency: existingMedication?.frequency || 'once daily' as MedicationFrequency,
     time: existingMedication?.time || '',
     slot: existingMedication?.slot || (emptySlots.length > 0 ? emptySlots[0] : 1),
+    beforeAfterFood: 'before',
+    additionalInstructions: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -52,97 +55,94 @@ const MedicationForm = ({ editId }: MedicationFormProps) => {
     'as needed',
   ];
 
+  const beforeAfterOptions = [
+    { value: 'before', label: 'Before Food' },
+    { value: 'after', label: 'After Food' },
+    { value: 'with', label: 'With Food' },
+    { value: 'anytime', label: 'Anytime' },
+  ];
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-          Medication Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Medication Name"
-          className="input"
-        />
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-100">
+        <button 
+          onClick={() => navigate(-1)}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <X size={24} className="text-gray-600" />
+        </button>
+        <h1 className="text-xl font-semibold text-gray-900">Add Medication</h1>
+        <div className="w-10"></div>
       </div>
-      
-      <div>
-        <label htmlFor="dosage" className="block text-sm font-medium text-gray-700 mb-1">
-          Dosage
-        </label>
-        <input
-          type="text"
-          id="dosage"
-          name="dosage"
-          required
-          value={formData.dosage}
-          onChange={handleChange}
-          placeholder="Dosage (e.g., 200mg)"
-          className="input"
-        />
-      </div>
-      
-      <div>
-        <label htmlFor="frequency" className="block text-sm font-medium text-gray-700 mb-1">
-          Frequency
-        </label>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        {/* Medication Name */}
+        <div>
+          <input
+            type="text"
+            name="name"
+            required
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Medication Name"
+            className="w-full px-4 py-4 bg-gray-100 rounded-2xl border-0 text-gray-900 placeholder-gray-500 focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-base"
+          />
+        </div>
+        
+        {/* Dosage */}
+        <div>
+          <input
+            type="text"
+            name="dosage"
+            required
+            value={formData.dosage}
+            onChange={handleChange}
+            placeholder="Dosage (e.g., 200mg)"
+            className="w-full px-4 py-4 bg-gray-100 rounded-2xl border-0 text-gray-900 placeholder-gray-500 focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-base"
+          />
+        </div>
+        
+        {/* Frequency */}
         <div className="relative">
           <select
-            id="frequency"
             name="frequency"
             required
             value={formData.frequency}
             onChange={handleChange}
-            className="input appearance-none pr-10"
+            className="w-full px-4 py-4 bg-gray-100 rounded-2xl border-0 text-gray-900 focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-base appearance-none pr-12"
           >
             {frequencyOptions.map(option => (
-              <option key={option} value={option}>{option}</option>
+              <option key={option} value={option}>
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </option>
             ))}
           </select>
-          <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-            <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
+          <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
         </div>
-      </div>
-      
-      <div>
-        <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
-          Time
-        </label>
-        <input
-          type="text"
-          id="time"
-          name="time"
-          required
-          value={formData.time}
-          onChange={handleChange}
-          placeholder="Time (e.g., 8:00 AM)"
-          className="input"
-        />
-      </div>
-      
-      <div>
-        <label htmlFor="slot" className="block text-sm font-medium text-gray-700 mb-1">
-          Slot
-        </label>
+        
+        {/* Time */}
+        <div>
+          <input
+            type="text"
+            name="time"
+            required
+            value={formData.time}
+            onChange={handleChange}
+            placeholder="Time (e.g., 8:00 AM)"
+            className="w-full px-4 py-4 bg-gray-100 rounded-2xl border-0 text-gray-900 placeholder-gray-500 focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-base"
+          />
+        </div>
+        
+        {/* Slot */}
         <div className="relative">
           <select
-            id="slot"
             name="slot"
             required
             value={formData.slot}
             onChange={handleChange}
-            className="input appearance-none pr-10"
+            className="w-full px-4 py-4 bg-gray-100 rounded-2xl border-0 text-gray-900 focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-base appearance-none pr-12"
           >
             {existingMedication && (
               <option value={existingMedication.slot}>
@@ -157,22 +157,49 @@ const MedicationForm = ({ editId }: MedicationFormProps) => {
                 </option>
               ))}
           </select>
-          <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-            <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
+          <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
         </div>
-      </div>
-      
-      <button type="submit" className="btn btn-primary w-full mt-6">
-        {editId ? 'Update Medication' : 'Add Medication'}
-      </button>
-    </form>
+        
+        {/* Before/After Food */}
+        <div className="relative">
+          <select
+            name="beforeAfterFood"
+            value={formData.beforeAfterFood}
+            onChange={handleChange}
+            className="w-full px-4 py-4 bg-gray-100 rounded-2xl border-0 text-gray-900 focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-base appearance-none pr-12"
+          >
+            {beforeAfterOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
+        </div>
+        
+        {/* Additional Instructions */}
+        <div>
+          <textarea
+            name="additionalInstructions"
+            value={formData.additionalInstructions}
+            onChange={handleChange}
+            placeholder="Additional Instructions"
+            rows={4}
+            className="w-full px-4 py-4 bg-gray-100 rounded-2xl border-0 text-gray-900 placeholder-gray-500 focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-base resize-none"
+          />
+        </div>
+        
+        {/* Submit Button */}
+        <div className="pt-4">
+          <button 
+            type="submit" 
+            className="w-full bg-blue-500 text-white py-4 rounded-2xl font-semibold text-base hover:bg-blue-600 active:bg-blue-700 transition-colors shadow-lg"
+          >
+            {editId ? 'Update Medication' : 'Add Medication'}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

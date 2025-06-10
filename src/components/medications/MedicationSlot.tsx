@@ -33,33 +33,93 @@ const MedicationSlot = ({
     }
   };
 
+  // Get background color based on slot number and status
+  const getBackgroundColor = () => {
+    if (status === 'empty') {
+      const emptyColors = [
+        'bg-gray-200', 'bg-gray-300', 'bg-slate-200', 'bg-stone-200', 'bg-neutral-200'
+      ];
+      return emptyColors[slotNumber % emptyColors.length];
+    }
+    
+    if (status === 'missed') {
+      return 'bg-gradient-to-br from-gray-800 to-gray-900';
+    }
+    
+    // On time colors - vibrant backgrounds
+    const colors = [
+      'bg-gradient-to-br from-teal-400 to-teal-500',
+      'bg-gradient-to-br from-cyan-400 to-cyan-600', 
+      'bg-gradient-to-br from-blue-100 to-blue-200',
+      'bg-gradient-to-br from-gray-800 to-gray-900',
+      'bg-gradient-to-br from-red-400 to-red-600',
+      'bg-gradient-to-br from-blue-100 to-blue-200',
+      'bg-gradient-to-br from-orange-400 to-orange-500',
+      'bg-gradient-to-br from-teal-300 to-teal-400',
+      'bg-gradient-to-br from-pink-300 to-pink-400',
+      'bg-gradient-to-br from-gray-100 to-gray-200'
+    ];
+    
+    return colors[(slotNumber - 1) % colors.length];
+  };
+
+  const getPillOrganizerImage = () => {
+    if (status === 'empty') {
+      return (
+        <div className="w-16 h-12 mx-auto mb-3 flex items-center justify-center">
+          <div className="w-12 h-8 border-2 border-gray-400 rounded-md bg-white/20 flex">
+            <div className="flex-1 border-r border-gray-400"></div>
+            <div className="flex-1 border-r border-gray-400"></div>
+            <div className="flex-1 border-r border-gray-400"></div>
+            <div className="flex-1"></div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-16 h-12 mx-auto mb-3 flex items-center justify-center">
+        <div className="w-12 h-8 bg-white/90 rounded-md shadow-sm flex items-center justify-center relative">
+          <div className="grid grid-cols-2 gap-1 p-1">
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+          </div>
+          {status === 'missed' && (
+            <div className="absolute inset-0 bg-red-500/20 rounded-md"></div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div 
-      className="card card-interactive w-full" 
+      className={`${getBackgroundColor()} rounded-2xl p-4 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg min-h-[160px] flex flex-col justify-between`}
       onClick={onClick}
     >
-      <div className="flex items-start gap-3">
-        <div 
-          className={`${animate ? 'animate-pill-taken' : ''}`}
-          onClick={handleTakeMedication}
-        >
-          <Pill 
-            size={24} 
-            className={`pill-icon ${getStatusClass(status)}`} 
-          />
-        </div>
-        <div className="flex-1">
-          <div className="flex justify-between items-start">
-            <h3 className="font-semibold">
-              Slot {slotNumber}: {getStatusText(status)}
-            </h3>
-          </div>
+      <div className="flex-1 flex flex-col justify-center">
+        {getPillOrganizerImage()}
+        
+        <div className="text-center">
+          <h3 className={`font-semibold text-sm mb-1 ${
+            status === 'empty' ? 'text-gray-600' : 
+            status === 'missed' ? 'text-white' : 
+            'text-gray-800'
+          }`}>
+            Slot {slotNumber}: {getStatusText(status)}
+          </h3>
+          
           {medication ? (
-            <p className="text-gray-600 mt-1">
-              {medication.name} {medication.dosage} - {medication.time}
-            </p>
+            <div className={`text-xs ${
+              status === 'missed' ? 'text-gray-200' : 'text-gray-600'
+            }`}>
+              <p className="font-medium">{medication.name} {medication.dosage}</p>
+              <p>{medication.time}</p>
+            </div>
           ) : (
-            <p className="text-gray-500 mt-1">Empty</p>
+            <p className="text-xs text-gray-500">Empty</p>
           )}
         </div>
       </div>

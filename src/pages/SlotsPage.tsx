@@ -18,7 +18,7 @@ const SlotsPage = () => {
 
   return (
     <Layout title="Medication Slots">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 pb-4">
         {slots.map((slot) => (
           <MedicationSlot
             key={slot.id}
