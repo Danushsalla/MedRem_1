@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import Layout from '../components/layout/Layout';
 import MedicationForm from '../components/medications/MedicationForm';
 import { useMedication } from '../context/MedicationContext';
+import Layout from '../components/layout/Layout';
 
 const EditMedicationPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,15 +26,7 @@ const EditMedicationPage = () => {
     );
   }
   
-  return (
-    <Layout 
-      title="Edit Medication" 
-      showBackButton 
-      onBack={() => navigate(-1)}
-    >
-      <MedicationForm editId={id} />
-    </Layout>
-  );
+  return <MedicationForm editId={id} />;
 };
 
 export default EditMedicationPage;

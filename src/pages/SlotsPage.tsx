@@ -27,13 +27,18 @@ const SlotsPage = () => {
 
   return (
     <Layout title="Medication Slots">
-      {/* Page summary */}
-      <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <span className="font-bold text-blue-700 text-lg">
-          {totalSlots > 0
-            ? `${filledSlots.length}/${totalSlots} slots filled`
-            : "No slots configured"}
-        </span>
+      <div className="grid grid-cols-2 gap-4 pb-4">
+        {slots.map((slot) => (
+          <MedicationSlot
+            key={slot.id}
+            slotNumber={slot.id}
+            status={slot.status}
+            medication={slot.medication}
+            onClick={() => 
+              handleSlotClick(slot.id, slot.medication?.id)
+            }
+          />
+        ))}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

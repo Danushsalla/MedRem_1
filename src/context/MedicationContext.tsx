@@ -61,45 +61,6 @@ const initialMedications: Medication[] = [
       { date: '2024-07-25', time: '6:00 PM', status: 'taken', takenAt: '6:15 PM' },
     ],
   },
-  {
-    id: '4',
-    name: 'Metformin',
-    dosage: '500mg',
-    frequency: 'once daily',
-    time: '7:00 AM',
-    slot: 6,
-    status: 'onTime',
-    history: [
-      { date: '2024-07-26', time: '7:00 AM', status: 'taken', takenAt: '7:10 AM' },
-      { date: '2024-07-25', time: '7:00 AM', status: 'taken', takenAt: '7:05 AM' },
-    ],
-  },
-  {
-    id: '5',
-    name: 'Lisinopril',
-    dosage: '10mg',
-    frequency: 'once daily',
-    time: '9:00 AM',
-    slot: 8,
-    status: 'onTime',
-    history: [
-      { date: '2024-07-26', time: '9:00 AM', status: 'taken', takenAt: '9:01 AM' },
-      { date: '2024-07-25', time: '9:00 AM', status: 'taken', takenAt: '9:00 AM' },
-    ],
-  },
-  {
-    id: '6',
-    name: 'Atorvastatin',
-    dosage: '20mg',
-    frequency: 'once daily',
-    time: '10:00 PM',
-    slot: 10,
-    status: 'onTime',
-    history: [
-      { date: '2024-07-25', time: '10:00 PM', status: 'taken', takenAt: '10:15 PM' },
-      { date: '2024-07-24', time: '10:00 PM', status: 'taken', takenAt: '10:05 PM' },
-    ],
-  },
 ];
 
 const MedicationContext = createContext<MedicationContextType | undefined>(undefined);
@@ -124,14 +85,14 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   }, [settings]);
 
   const generateSlots = () => {
-    const slots = Array.from({ length: 10 }, (_, i) => ({
+    const slots = Array.from({ length: 4 }, (_, i) => ({
       id: i + 1,
       status: 'empty' as MedicationStatus,
       medication: null,
     }));
 
     medications.forEach((med) => {
-      if (med.slot > 0 && med.slot <= 10) {
+      if (med.slot > 0 && med.slot <= 4) {
         slots[med.slot - 1] = {
           id: med.slot,
           status: med.status,
