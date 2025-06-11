@@ -152,7 +152,7 @@ const HomePage = () => {
               </div>
               <span className="font-semibold text-gray-900 text-sm">View Slots</span>
               <p className="text-gray-500 text-xs mt-1">
-                {emptySlotCount > 0 ? `${emptySlotCount} empty slots` : 'All slots filled'}
+                {emptySlotCount > 0 ? `${emptySlotCount} empty slots` : 'All slots are full'}
               </p>
             </div>
           </button>
