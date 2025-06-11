@@ -37,7 +37,7 @@ const MedicationSlot = ({
   const getBackgroundColor = () => {
     if (status === 'empty') {
       const emptyColors = [
-        'bg-gray-200', 'bg-gray-300', 'bg-slate-200', 'bg-stone-200', 'bg-neutral-200'
+        'bg-gray-200', 'bg-gray-300', 'bg-slate-200', 'bg-stone-200'
       ];
       return emptyColors[slotNumber % emptyColors.length];
     }
@@ -51,13 +51,7 @@ const MedicationSlot = ({
       'bg-gradient-to-br from-teal-400 to-teal-500',
       'bg-gradient-to-br from-cyan-400 to-cyan-600', 
       'bg-gradient-to-br from-blue-100 to-blue-200',
-      'bg-gradient-to-br from-gray-800 to-gray-900',
-      'bg-gradient-to-br from-red-400 to-red-600',
-      'bg-gradient-to-br from-blue-100 to-blue-200',
-      'bg-gradient-to-br from-orange-400 to-orange-500',
-      'bg-gradient-to-br from-teal-300 to-teal-400',
-      'bg-gradient-to-br from-pink-300 to-pink-400',
-      'bg-gradient-to-br from-gray-100 to-gray-200'
+      'bg-gradient-to-br from-gray-800 to-gray-900'
     ];
     
     return colors[(slotNumber - 1) % colors.length];
