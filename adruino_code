@@ -1,0 +1,175 @@
+#include <WiFi.h>
+#include <Firebase_ESP_Client.h>
+#include <addons/TokenHelper.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// Wi-Fi credentials
+#define WIFI_SSID "realme 9 Pro"
+#define WIFI_PASSWORD "p3591811"
+
+// Firebase credentials
+#define API_KEY "AIzaSyAnl0g--qdFEQFRE4bTCYOZ9Ui_ncANJsU"
+#define DATABASE_URL "https://medicine-reminder-8516d-default-rtdb.firebaseio.com/"
+
+// OLED display
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// Pins
+#define LED1 5
+#define LED2 18
+#define LED3 23
+#define LED4 19
+#define BUZZER 32
+#define STOP_BUTTON 26
+
+FirebaseData fbdo;
+FirebaseAuth auth;
+FirebaseConfig config;
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 19800, 60000);  // IST
+
+String currentTime, t1, t2, t3, t4;
+String lastReminderTime = "";
+bool isBuzzing = false;
+int activeLED = -1;
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(LED1, OUTPUT); pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT); pinMode(LED4, OUTPUT);
+  pinMode(BUZZER, OUTPUT); pinMode(STOP_BUTTON, INPUT_PULLUP);
+
+  digitalWrite(LED1, LOW); digitalWrite(LED2, LOW);
+  digitalWrite(LED3, LOW); digitalWrite(LED4, LOW);
+  digitalWrite(BUZZER, LOW);
+
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("❌ SSD1306 failed"));
+    while (true);
+  }
+  display.clearDisplay(); display.display();
+
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("🔌 Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500); Serial.print(".");
+  }
+  Serial.println("\n✅ WiFi connected");
+
+  timeClient.begin();
+  config.api_key = API_KEY;
+  config.database_url = DATABASE_URL;
+  config.token_status_callback = tokenStatusCallback;
+
+  auth.user.email = "esp32@test.com";
+  auth.user.password = "dhiveej@24";
+
+  Firebase.begin(&config, &auth);
+  Firebase.reconnectWiFi(true);
+}
+
+void loop() {
+  timeClient.update();
+  currentTime = timeClient.getFormattedTime().substring(0, 5);
+  Serial.println("🕒 Time: " + currentTime);
+
+  if (Firebase.ready()) {
+    // Get times from Firebase
+    t1 = fetchTime("/reminderTimes/tablet1");
+    t2 = fetchTime("/reminderTimes/tablet2");
+    t3 = fetchTime("/reminderTimes/tablet3");
+    t4 = fetchTime("/reminderTimes/tablet4");
+
+    if (!isBuzzing && currentTime != lastReminderTime) {
+      if (t1 == currentTime) {
+        triggerReminder(LED1, "Tablet ");
+        lastReminderTime = currentTime;
+      } else if (t2 == currentTime) {
+        triggerReminder(LED2, "Tablet ");
+        lastReminderTime = currentTime;
+      } else if (t3 == currentTime) {
+        triggerReminder(LED3, "Tablet ");
+        lastReminderTime = currentTime;
+      } else if (t4 == currentTime) {
+        triggerReminder(LED4, "Tablet ");
+        lastReminderTime = currentTime;
+      } else {
+        showIdleMessage();
+      }
+    }
+
+    // Check button press to stop buzzer
+    if (isBuzzing && digitalRead(STOP_BUTTON) == LOW) {
+      stopReminder();
+    }
+
+  } else {
+    Serial.println("❌ Firebase not ready");
+  }
+
+  delay(1000);  // Poll every second
+}
+
+String fetchTime(String path) {
+  if (Firebase.RTDB.getString(&fbdo, path)) {
+    return fbdo.stringData();
+  }
+  Serial.println("⚠️ Failed to read " + path);
+  return "";
+}
+
+void triggerReminder(int ledPin, String label) {
+  digitalWrite(ledPin, HIGH);
+  digitalWrite(BUZZER, HIGH);
+  isBuzzing = true;
+  activeLED = ledPin;
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 10);
+  display.print("Take "); display.println(label);
+  display.setCursor(0, 30);
+  display.print("at "); display.println(currentTime);
+  display.display();
+
+  Serial.println("💊 Reminder for: " + label);
+}
+
+void stopReminder() {
+  digitalWrite(BUZZER, LOW);
+  if (activeLED != -1) digitalWrite(activeLED, LOW);
+  isBuzzing = false;
+  activeLED = -1;
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 10);
+  display.println("Medication taken");
+  display.setCursor(0, 30);
+  display.println("Good job!");
+  display.display();
+
+  Serial.println("🛑 Reminder cleared.");
+}
+
+void showIdleMessage() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 10);
+  display.println("No reminders");
+  display.setCursor(0, 30);
+  display.println("All clear :)");
+  display.display();
+}
